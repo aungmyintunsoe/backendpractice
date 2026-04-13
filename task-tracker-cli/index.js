@@ -33,92 +33,92 @@ function addTask(description) {
     console.log(`Task added successfully! (ID: ${newTask.id})`);
 
 
-function listTasks(statusFilter) {
-    let tasks = readTasks();
-    if (tasks.length === 0) {
-        console.log("No tasks found.");
-        return;
+    function listTasks(statusFilter) {
+        let tasks = readTasks();
+        if (tasks.length === 0) {
+            console.log("No tasks found.");
+            return;
+        }
+
+        if (statusFilter) {
+            tasks = tasks.filter(t => t.status === statusFilter);
+        }
+
+        if (tasks.length === 0) {
+            console.log(`No tasks found with status "${statusFilter}".`);
+            return;
+        }
+
+        console.log("--- Tasks ---");
+        tasks.forEach(task => {
+            console.log(`[${task.id}] ${task.description} - Status: ${task.status}`);
+        });
     }
 
-    if (statusFilter) {
-        tasks = tasks.filter(t => t.status === statusFilter);
+    function updateTask(id, newDescription) {
+        const tasks = readTasks();
+        const task = tasks.find(t => t.id == parseInt(id));
+
+        if (!task) {
+            console.log(`Task with ID ${id} not found.`);
+            return;
+        }
+
+        task.description = newDescription;
+        task.updatedAt = new Date().toISOString();
+        saveTasks(tasks);
+        console.log(`Task ${id} updated successfully!`);
     }
 
-    if (tasks.length === 0) {
-        console.log(`No tasks found with status "${statusFilter}".`);
-        return;
+    function deleteTask(id) {
+        const tasks = readTasks();
+        const newTaskList = tasks.filter(t => t.id !== parseInt(id));
+
+        if (tasks.length === newTaskList.length) {
+            console.log(`Task with ID ${id} not found.`);
+            return;
+        }
+
+        saveTasks(newTaskList);
+        console.log(`Task ${id} deleted successfully.`);
     }
 
-    console.log("--- Tasks ---");
-    tasks.forEach(task => {
-        console.log(`[${task.id}] ${task.description} - Status: ${task.status}`);
-    });
-}
+    function markStatus(id, newStatus) {
+        const tasks = readTasks();
+        const task = tasks.find(t => t.id == parseInt(id));
 
-function updateTask(id, newDescription) {
-    const tasks = readTasks();
-    const task = tasks.find(t => t.id == parseInt(id));
+        if (!task) {
+            console.log(`Task with ID ${id} not found.`);
+            return;
+        }
 
-    if (!task) {
-        console.log(`Task with ID ${id} not found.`);
-        return;
+        task.status = newStatus;
+        task.updatedAt = new Date().toISOString();
+        saveTasks(tasks);
+        console.log(`Task ${id} marked as ${newStatus}!`);
     }
 
-    task.description = newDescription;
-    task.updatedAt = new Date().toISOString();
-    saveTasks(tasks);
-    console.log(`Task ${id} updated successfully!`);
-}
-
-function deleteTask(id) {
-    const tasks = readTasks();
-    const newTaskList = tasks.filter(t => t.id !== parseInt(id));
-
-    if (tasks.length === newTaskList.length) {
-        console.log(`Task with ID ${id} not found.`);
-        return;
-    }
-
-    saveTasks(newTaskList);
-    console.log(`Task ${id} deleted successfully.`);
-}
-
-function markStatus(id, newStatus) {
-    const tasks = readTasks();
-    const task = tasks.find(t => t.id == parseInt(id));
-
-    if (!task) {
-        console.log(`Task with ID ${id} not found.`);
-        return;
-    }
-
-    task.status = newStatus;
-    task.updatedAt = new Date().toISOString();
-    saveTasks(tasks);
-    console.log(`Task ${id} marked as ${newStatus}!`);
-}
-
-switch (command) {
-    case 'add':
-        addTask(args[0]);
-        break;
-    case 'list':
-        listTasks(args[0]);
-        break;
-    case 'update':
-        updateTask(args[0], args[1]);
-        break;
-    case 'delete':
-        deleteTask(args[0]);
-        break;
-    case 'mark-in-progress':
-        markStatus(args[0], 'in-progress');
-        break;
-    case 'mark-done':
-        markStatus(args[0], 'done');
-        break;
-    default:
-        console.log(`
+    switch (command) {
+        case 'add':
+            addTask(args[0]);
+            break;
+        case 'list':
+            listTasks(args[0]);
+            break;
+        case 'update':
+            updateTask(args[0], args[1]);
+            break;
+        case 'delete':
+            deleteTask(args[0]);
+            break;
+        case 'mark-in-progress':
+            markStatus(args[0], 'in-progress');
+            break;
+        case 'mark-done':
+            markStatus(args[0], 'done');
+            break;
+        default:
+            console.log(`
         Usage: node index.js [command] [arguments]
 
         Commands:
@@ -129,4 +129,5 @@ switch (command) {
         mark-in-progress <id>      Mark task as in-progress
         mark-done <id>             Mark task as done
     `);
+    }
 }
