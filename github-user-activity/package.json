@@ -1,0 +1,7 @@
+{
+  "name": "github-user-activity",
+  "version": "1.0.0",
+  "description": "Fetch GitHub user activity and display it in the terminal.",
+  "type": "module"
+  
+}
